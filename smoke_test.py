@@ -99,6 +99,14 @@ def main():
     game.handle_event(keydown(pygame.K_RETURN))
     assert game.state == "menu", game.state
 
+    # weavers spawned near an edge must stay on-screen while sine-drifting
+    edge_weaver = make_enemy("weaver", 40, 100, 1)
+    for _ in range(600):
+        edge_weaver.update(1 / 60, game.player.pos)
+        assert edge_weaver.radius <= edge_weaver.pos.x <= config.WIDTH - edge_weaver.radius, \
+            edge_weaver.pos.x
+    print("weaver on-screen clamp ok")
+
     # power-up application path
     game.start_game()
     game.player.add_powerup("spread")
