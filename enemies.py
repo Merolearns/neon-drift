@@ -113,6 +113,9 @@ class Weaver(Enemy):
         super().update(dt, player_pos)
         self.pos.y += self.vy * dt
         self.pos.x = self.base_x + math.sin(self.t * 3.2) * 130
+        # a weaver spawned near an edge used to sine-drift off-screen,
+        # where it couldn't be hit but could still shoot. keep it in play.
+        self.pos.x = max(self.radius, min(config.WIDTH - self.radius, self.pos.x))
 
     def try_fire(self, dt, player_pos):
         if not self.fire_cd:
