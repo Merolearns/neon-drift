@@ -116,6 +116,11 @@ class Weaver(Enemy):
         # a weaver spawned near an edge used to sine-drift off-screen,
         # where it couldn't be hit but could still shoot. keep it in play.
         self.pos.x = max(self.radius, min(config.WIDTH - self.radius, self.pos.x))
+        # a weaver that slips past the player keeps falling otherwise —
+        # off the bottom means it escaped, and nothing can kill it
+        # anymore, so the wave would stall forever. count it as gone.
+        if self.pos.y > config.HEIGHT + self.radius:
+            self.dead = True
 
     def try_fire(self, dt, player_pos):
         if not self.fire_cd:

@@ -107,6 +107,17 @@ def main():
             edge_weaver.pos.x
     print("weaver on-screen clamp ok")
 
+    # a weaver that slips past the player must not stall the wave
+    game.start_game()
+    game.spawn_queue.clear()
+    game.enemies.append(make_enemy("weaver", 100, config.HEIGHT - 5, 1))
+    for _ in range(300):
+        game.update(1 / 60, keys)
+        if game.wave == 2:
+            break
+    assert game.wave == 2, f"wave stalled with {len(game.enemies)} enemies left"
+    print("weaver exit ok")
+
     # power-up application path
     game.start_game()
     game.player.add_powerup("spread")
@@ -119,6 +130,10 @@ def main():
 
     pygame.quit()
     print("SMOKE OK — no exceptions")
+
+
+def test_smoke():
+    main()
 
 
 if __name__ == "__main__":
