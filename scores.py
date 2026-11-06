@@ -32,6 +32,14 @@ class ScoreDB:
                 "INSERT INTO scores (name, score, wave) VALUES (?, ?, ?)",
                 (name.upper(), int(score), int(wave)),
             )
+            # the table is only ever read as a top-10, so drop anything
+            # below it - otherwise it grows by a row per game forever
+            con.execute(
+                "DELETE FROM scores WHERE id NOT IN "
+                "(SELECT id FROM scores ORDER BY score DESC, "
+                "created_at ASC LIMIT ?)",
+                (config.SCORE_TABLE_SIZE,),
+            )
 
     def top(self, limit=config.SCORE_TABLE_SIZE):
         with self._connect() as con:

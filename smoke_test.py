@@ -95,6 +95,18 @@ def main():
     assert any(r[0] == "SMOKE" for r in db2.top())
     print("high-score persistence ok")
 
+    # the table stays bounded: only the top 10 survive, lowest pruned
+    prune_db = ScoreDB(path=os.path.join(tempfile.mkdtemp(), "prune.db"))
+    for i in range(12):
+        prune_db.add_score(f"P{i}", i * 10, 1)
+    import sqlite3
+    with sqlite3.connect(prune_db.path) as con:
+        n = con.execute("SELECT COUNT(*) FROM scores").fetchone()[0]
+    assert n == config.SCORE_TABLE_SIZE, n
+    assert [r[1] for r in prune_db.top()] == \
+        [110, 100, 90, 80, 70, 60, 50, 40, 30, 20]
+    print("high-score prune ok")
+
     # back to menu
     game.handle_event(keydown(pygame.K_RETURN))
     assert game.state == "menu", game.state
