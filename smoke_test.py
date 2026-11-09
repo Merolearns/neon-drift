@@ -140,6 +140,23 @@ def main():
     assert len(shots) == 3, shots  # spread = 3-way
     print("power-ups ok")
 
+    # ENTER on an empty name box must still save, under the default name
+    game.start_game()
+    game.score = 500
+    game.player.lives = 1
+    game.player.invuln = 0
+    game.enemies.append(make_enemy("drifter", game.player.pos.x, game.player.pos.y, 1))
+    for _ in range(120):
+        game.update(1 / 60, keys)
+        if game.state == "gameover":
+            break
+    assert game.state == "gameover", game.state
+    assert game.entering_name and game.name_entry == ""
+    game.handle_event(keydown(pygame.K_RETURN))
+    assert game.state == "scores", game.state
+    assert any(r[0] == "ACE" for r in game.scores.top()), game.scores.top()
+    print("empty-name save ok")
+
     pygame.quit()
     print("SMOKE OK — no exceptions")
 

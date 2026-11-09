@@ -145,7 +145,7 @@ class Game:
                 self.to_menu()
         elif self.state == "gameover":
             if self.entering_name:
-                if k == pygame.K_RETURN and self.name_entry.strip():
+                if k == pygame.K_RETURN:
                     self._save_score()
                 elif k == pygame.K_BACKSPACE:
                     self.name_entry = self.name_entry[:-1]
