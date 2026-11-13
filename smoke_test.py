@@ -20,7 +20,7 @@ import pygame
 
 import config
 from enemies import make_enemy
-from game import Game
+from game import Bullet, Game
 from scores import ScoreDB
 
 
@@ -156,6 +156,22 @@ def main():
     assert game.state == "scores", game.state
     assert any(r[0] == "ACE" for r in game.scores.top()), game.scores.top()
     print("empty-name save ok")
+
+    # dying to a leftover bullet during the inter-wave pause must not
+    # award the wave-clear bonus or advance the wave after game over
+    game.start_game()
+    game.spawn_queue.clear()
+    game.enemies.clear()
+    game.wave_pause = 1.99
+    game.player.lives = 1
+    game.player.invuln = 0
+    game.bullets.append(Bullet(game.player.pos.x, game.player.pos.y,
+                               0, 0, friendly=False))
+    game.update(1 / 60, keys)
+    assert game.state == "gameover", game.state
+    assert game.wave == 1, game.wave
+    assert game.score == 0, game.score
+    print("no bonus after death ok")
 
     pygame.quit()
     print("SMOKE OK — no exceptions")

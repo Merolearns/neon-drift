@@ -213,6 +213,13 @@ class Game:
 
         self._collisions()
 
+        # dying mid-frame ends the run here: a leftover bullet killing the
+        # player during the inter-wave pause used to fall through to the
+        # wave-clear check below, awarding the clear bonus and advancing
+        # the wave after game over
+        if self.state != "playing":
+            return
+
         # cull
         self.enemies = [e for e in self.enemies if not e.dead]
         self.bullets = [b for b in self.bullets if not b.dead]
