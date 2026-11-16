@@ -51,7 +51,13 @@ class ScoreDB:
         return rows
 
     def qualifies(self, score):
-        """True if the score makes the table (or the table isn't full)."""
+        """True if the score makes the table (or the table isn't full).
+
+        A scoreless run never counts - a 0 is not a high score, even
+        when the table still has empty slots.
+        """
+        if score <= 0:
+            return False
         rows = self.top()
         return len(rows) < config.SCORE_TABLE_SIZE or score > rows[-1][1]
 

@@ -70,6 +70,9 @@ def main():
     print("pause ok")
 
     # force game over
+    # name entry needs a real score now (a 0 no longer qualifies), so
+    # give this run one - the simulated shooting above may not have hit
+    game.score = 500
     game.player.lives = 1
     game.player.invuln = 0
     game.enemies.append(make_enemy("drifter", game.player.pos.x, game.player.pos.y, 1))
