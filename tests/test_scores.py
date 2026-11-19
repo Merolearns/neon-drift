@@ -31,3 +31,14 @@ def test_full_table(db):
     assert db.qualifies(0) is False
     assert db.qualifies(10) is False  # tie with the lowest score: no bump
     assert db.qualifies(11) is True
+
+
+def test_missing_parent_dir_is_created(tmp_path, monkeypatch):
+    # NEON_DRIFT_DB can point at a fresh nested path - sqlite won't
+    # create the folder itself, it used to fail with OperationalError
+    nested = tmp_path / "fresh" / "nested" / "scores.db"
+    monkeypatch.setenv("NEON_DRIFT_DB", str(nested))
+    db = ScoreDB()
+    assert os.path.isfile(str(nested))
+    db.add_score("ACE", 100, 3)
+    assert db.top() == [("ACE", 100, 3)]

@@ -1,5 +1,6 @@
 """SQLite high-score table. Top 10, name + score + wave reached."""
 
+import os
 import sqlite3
 
 import config
@@ -8,6 +9,11 @@ import config
 class ScoreDB:
     def __init__(self, path=None):
         self.path = path or config.db_path()
+        # the default path's folder is made by config.db_path, but a
+        # NEON_DRIFT_DB override (or a custom path) can point somewhere
+        # new - sqlite won't create missing folders, it just fails
+        parent = os.path.dirname(os.path.abspath(self.path))
+        os.makedirs(parent, exist_ok=True)
         self._init()
 
     def _connect(self):
