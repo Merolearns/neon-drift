@@ -288,19 +288,25 @@ class Game:
             self.sounds.player_hit()
             self.particles.sparks(self.player.pos.x, self.player.pos.y,
                                  config.NEON_CYAN, 14)
-        else:
+        elif result == "hit":
+            # a survivable hit gets small feedback only - the big
+            # explosion is reserved for actually dying, so the two
+            # never look or sound the same
+            self.sounds.player_hit()
+            self.particles.sparks(self.player.pos.x, self.player.pos.y,
+                                 config.NEON_CYAN, 14)
+        else:  # dead
             self.sounds.explosion(big=True)
             self.particles.explosion(self.player.pos.x, self.player.pos.y,
                                      config.NEON_CYAN, big=True)
-            if result == "dead":
-                self.sounds.gameover()
-                self.state = "gameover"
-                if self.scores.qualifies(self.score):
-                    self.entering_name = True
-                    self.name_entry = ""
-                # clear the field so the game-over screen is readable
-                self.enemies.clear()
-                self.bullets.clear()
+            self.sounds.gameover()
+            self.state = "gameover"
+            if self.scores.qualifies(self.score):
+                self.entering_name = True
+                self.name_entry = ""
+            # clear the field so the game-over screen is readable
+            self.enemies.clear()
+            self.bullets.clear()
 
     # --- drawing ---
     def draw(self):
