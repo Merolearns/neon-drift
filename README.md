@@ -10,12 +10,13 @@ quarters.
 ## How to run
 
 ```bash
-pip install pygame
+pip install -r requirements.txt
 python main.py
 ```
 
-Python 3.10+ and pygame 2.x. No other dependencies, no asset files — every
-sprite is drawn in code and every sound is synthesized at startup.
+Python 3.10+, pygame 2.x and numpy (for the synthesized sounds). No asset
+files — every sprite is drawn in code and every sound is synthesized at
+startup.
 
 ## Controls
 

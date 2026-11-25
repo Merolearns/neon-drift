@@ -2,7 +2,8 @@
 
 No audio files needed — everything is generated from sine waves and
 filtered noise. If the mixer can't init (headless server, no audio
-device), every method just no-ops so the game still runs.
+device) — or numpy isn't installed — every method just no-ops so the
+game still runs.
 """
 
 import math
@@ -65,7 +66,13 @@ class SoundBank:
         except pygame.error:
             # no audio device — game runs silent
             return
-        self._build()
+        try:
+            self._build()
+        except ImportError:
+            # numpy missing (the README used to say `pip install pygame`
+            # only, so this is easy to hit) — game runs silent
+            self.enabled = False
+            self.sounds = {}
 
     def _build(self):
         import numpy as np
