@@ -45,7 +45,12 @@ class PowerUp:
         pulse = 1.0 + 0.12 * math.sin(self.t * 6)
         r = int(self.radius * pulse)
         pygame.draw.circle(surf, self.color, (x, y), r, 2)
-        pygame.draw.circle(surf, (*self.color, 60), (x, y), r)  # faint fill
+        # faint fill on its own SRCALPHA surface - drawing the RGBA
+        # colour straight onto the plain world surface drops the alpha
+        # and the fill comes out opaque, hiding the ring
+        fill = pygame.Surface((r * 2, r * 2), pygame.SRCALPHA)
+        pygame.draw.circle(fill, (*self.color, 60), (r, r), r)
+        surf.blit(fill, (x - r, y - r))
         font = pygame.font.Font(None, 24)
         txt = font.render(self.label, True, config.WHITE)
         surf.blit(txt, txt.get_rect(center=(x, y)))
